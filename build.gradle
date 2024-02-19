@@ -1,0 +1,45 @@
+buildscript {
+	repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io/' }
+    }
+    dependencies {
+        classpath('com.github.Fox2Code.FoxLoader:dev:1.2.38')
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'java'
+    id "io.freefair.lombok" version "8.4"
+}
+
+apply plugin: 'foxloader.dev'
+
+version '1.0.0'
+
+foxloader {
+    // forceReload = true
+    modId = "spleef"
+    modName = "Spleef"
+    modVersion = project.version
+    modDesc = "Play some Spleef!"
+    clientMod = "com.johnanater.spleef.SpleefClient"
+    serverMod = "com.johnanater.spleef.SpleefServer"
+    // Development tools don't like that both client and server define
+    // the same classes, so uncomment to disable the side inclusion.
+    // includeClient = false
+    // includeServer = false
+}
+
+allprojects {
+    updateVersion()
+}
+
+def updateVersion() {
+    def mainFile = new File('src/main/java/com/johnanater/spleef/Spleef.java')
+    println "Updating version to '${version}' in ${mainFile}"
+    String configContent = mainFile.getText('UTF-8')
+    configContent = configContent.replaceAll(/private final String version = .*/, "private final String version = \"${version}\";")
+    mainFile.write(configContent, 'UTF-8')
+}
